@@ -1,0 +1,27 @@
+{
+  "name": "mr18",
+  "version": "1.0.1",
+  "description": "Module for challenge 18.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index",
+    "dev": "nodemon index",
+    "seed": "node utils/seed",
+    "heroku-postbuild": "node utils/seed.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nightfeller/mod-repo-18.git"
+  },
+  "author": "Matthew Earls",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Nightfeller/mod-repo-18/issues"
+  },
+  "homepage": "https://github.com/Nightfeller/mod-repo-18#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^7.0.2",
+    "mongoose-unique-validator": "^4.0.0"
+  }
+}
