@@ -12,7 +12,12 @@ router.route('/').get(async (req, res) => {
         const user = thought.userId;
         user.push(thought);
         res.json(thought);
-    } catch (err) { res.status(500).json(err); }
+    } catch (err) { 
+        const thought = await Thought.create(req.body);
+        console.log(thought);
+        console.log(err); 
+        res.status(500).json(err); 
+    }
 });
 
 router.route('/:thoughtId').get(async (req, res) => {

@@ -41,7 +41,7 @@ router.route('/:userId').get(async (req, res) => { try {
 });
 
 router.route('/:userId/friends/:friendId').post(async (req, res) => { try {
-    const friend = await User.findOne({ _id: req.params.userId }).select('-__v');
+    const friend = await User.findOne({ _id: req.params.friendId }).select('-__v');
     if (!friend) { return res.status(404).json({ message: 'No friend with that ID' }); }
     res.json(friend);
     } catch (err) { res.status(500).json(err); }
