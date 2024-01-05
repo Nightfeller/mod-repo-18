@@ -7,7 +7,7 @@
     "start": "node index",
     "dev": "nodemon index",
     "seed": "node utils/seed",
-    "heroku-postbuild": "node utils/seed.js"
+    "heroku-seed": "node utils/seed.js"
   },
   "repository": {
     "type": "git",

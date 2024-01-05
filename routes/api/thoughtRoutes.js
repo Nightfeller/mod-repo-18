@@ -32,9 +32,36 @@ router.route('/:thoughtId').get(async (req, res) => {
         res.json(thought);
     } catch (err) { res.status(500).json(err); }
 }).put(async (req, res) => {
-    
+    try {
+        const thought = await Thought.findOneAndUpdate( 
+            { _id: req.params.thoughtId }, 
+            { $set: req.body }, 
+            { runValidators: true, new: true } 
+        );
+        if (!thought) { res.status(404).json({ message: 'No thoughts with this id!' }); }
+    res.json(thought);
+    } catch (err) { 
+        console.log(err);
+        res.status(500).json(err); 
+    }
 }).delete(async (req, res) => {
     
+});
+
+router.route('/:thoughtId/reactions').post(async (req, res) => {
+    try {
+        
+    } catch (err) {
+        console.log(err);
+        res.status(500).json(err);
+    }
+}).delete(async (req, res) => {
+    try {
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).json(err);
+    }
 });
 
 module.exports = router;
