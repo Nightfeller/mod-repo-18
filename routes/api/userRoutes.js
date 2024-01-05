@@ -31,7 +31,10 @@ router.route('/:userId').get(async (req, res) => { try {
         );
         if (!user) { res.status(404).json({ message: 'No user with this id!' }); }
         res.json(user);
-        } catch (err) { res.status(500).json(err); }
+        } catch (err) { 
+            console.log(err);
+            res.status(500).json(err); 
+        }
 }).delete(async (req, res) => { try {
         const user = await User.findOneAndDelete({ _id: req.params.userId });
         if (!user) { res.status(404).json({ message: 'No user with that ID' }); }
@@ -40,11 +43,23 @@ router.route('/:userId').get(async (req, res) => { try {
     } catch (err) { res.status(500).json(err); }
 });
 
-router.route('/:userId/friends/:friendId').post(async (req, res) => { try {
-    const user = await User.create();
+router.route('/:userId/friends/:friendId').post(async (req, res) => { 
+    try {
+        const friend = await User.findOne({ _id: req.params.friendId }).select('__v');
+        const user = await User.findOneAndUpdate(
+            {_id: req.params.userId},
+            { $push: { friends: friend._id } }, 
+            { runValidators: true, new: true }
+        );
+        console.log(req.params.userId);
+        console.log(user);
+        res.json(user.friends);
     } catch (err) { 
-        console.log(err); 
-        res.status(500).json(err);
+        const friend = await User.findOne({ _id: req.params.friendId }).select('__v');
+        // console.log(req.params.userId);
+        console.log("-----------------------------------------------");
+        console.log(err);
+        res.status(500).json(err); 
     }
 }).delete(async (req, res) => { try {
     const friend = await User.findOneAndDelete({ _id: req.params.userId });
