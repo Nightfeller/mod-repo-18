@@ -9,13 +9,18 @@ router.route('/').get(async (req, res) => {
 }).post(async (req, res) => {
     try {
         const thought = await Thought.create(req.body);
-        const user = thought.userId;
-        user.push(thought);
+        const user = await User.findOneAndUpdate(
+            {_id: req.body.userId},
+            { $push: { thoughts: thought._id } }, 
+            { runValidators: true, new: true }
+        );
+        console.log(req.body.userId);
+        console.log(user);
         res.json(thought);
     } catch (err) { 
         const thought = await Thought.create(req.body);
         console.log(thought);
-        console.log(err); 
+        console.log(err);
         res.status(500).json(err); 
     }
 });

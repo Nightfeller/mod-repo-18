@@ -41,14 +41,15 @@ router.route('/:userId').get(async (req, res) => { try {
 });
 
 router.route('/:userId/friends/:friendId').post(async (req, res) => { try {
-    const friend = await User.findOne({ _id: req.params.friendId }).select('-__v');
-    if (!friend) { return res.status(404).json({ message: 'No friend with that ID' }); }
-    res.json(friend);
-    } catch (err) { res.status(500).json(err); }
+    const user = await User.create();
+    } catch (err) { 
+        console.log(err); 
+        res.status(500).json(err);
+    }
 }).delete(async (req, res) => { try {
     const friend = await User.findOneAndDelete({ _id: req.params.userId });
     if (!friend) { res.status(404).json({ message: 'No friend with that ID' }); }
-    res.json({ message: 'Friend remvoed.' });
+    res.json({ message: 'Friend removed.' });
     } catch (err) { res.status(500).json(err); }
 });
 
