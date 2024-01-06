@@ -45,33 +45,43 @@ router.route('/:thoughtId').get(async (req, res) => {
         res.status(500).json(err); 
     }
 }).delete(async (req, res) => {
-    
+    try {
+        const thought = await Thought.findOneAndDelete({ _id: req.params.thoughtId });
+        if (!thought) { res.status(404).json({ message: 'No thought with that ID' }); }
+        res.json({ message: 'Thought deleted.' });
+    } catch (err) { 
+        console.log(err);
+        res.status(500).json(err);
+    }
 });
 
-router.route('/:thoughtId/reactions').post(async (req, res) => {
+router.route('/:thoughtId/reactions/').post(async (req, res) => {
     try {
         const reaction = Thought.findOne({ _id: req.params.thoughtId }).select('__v');
         const thought = await Thought.findOneAndUpdate(
             { _id: req.params.thoughtId },
-            { $push: { reactions: reactions.reactionId } },
+            { $push: { reactions: req.body } },
             { runValidators: true, new: true },
         );
         console.log(req.params.thoughtId);
-        console.log(req.body.reactionId);
+        console.log(req.body);
         res.json(thought.reactions);
     } catch (err) {
-        const reaction = await Thought.findOne({ _id: req.params.friendId }).select('__v');
+        const reaction = await Thought.findOne({ _id: req.params.thoughtId }).select('__v');
+        console.log(req.body);
         console.log(reaction);
         console.log('-----------------------------------------');
         console.log(err);
         res.status(500).json(err);
     }
-}).delete(async (req, res) => {
+});
+
+router.route('/:thoughtId/reactions/:reactionId').delete(async (req, res) => {
     try {
-        const reaction = await Thought.findOneAndDelete({ _id: req.body.reactionId });
+        const reaction = await Thought.findOneAndDelete({ _id: req.params.reactionId });
         if (!reaction) { res.status(404).json({ message: 'No reaction with that ID' }); }
         res.json({ message: 'Reaction removed.' });
-    } catch (err) {
+    } catch (err) { 
         console.log(err);
         res.status(500).json(err);
     }
