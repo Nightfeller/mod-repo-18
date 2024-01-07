@@ -78,8 +78,23 @@ router.route('/:thoughtId/reactions/').post(async (req, res) => {
 
 router.route('/:thoughtId/reactions/:reactionId').delete(async (req, res) => {
     try {
-        const reaction = await Thought.findOneAndDelete({ _id: req.params.reactionId });
-        if (!reaction) { res.status(404).json({ message: 'No reaction with that ID' }); }
+        console.log(req.params.reactionId);
+        const thought = await Thought.findOne({ _id: req.params.thoughtId }).select('-__v');
+        for (let i = 0; i < thought.reactions.length; i++) {
+            console.log(thought.reactions[i]._id);
+            const reaction = await Thought.findOne(
+                { _id: thought.reactions[i]._id },
+                { runValidators: true, new: true }
+                ).select('-__v');
+            console.log(reaction);
+        }
+        // if (!reaction) {
+        //     res.status(404).json({ message: 'No reaction with that ID' }); 
+        //     return;
+        // }
+        console.log('--------------------------');
+        // console.log(thought);
+        
         res.json({ message: 'Reaction removed.' });
     } catch (err) { 
         console.log(err);
