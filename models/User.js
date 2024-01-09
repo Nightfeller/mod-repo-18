@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const { Thought } = require('./Thought.js');
 
 function valid (val) {
     return /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(val);
@@ -19,8 +20,8 @@ const userSchema = new Schema(
             unique: true,
             validate: emailValidator
         },
-        thoughts: [{type: Schema.Types.ObjectId, ref: 'thought'}],
-        friends: [{type: Schema.Types.ObjectId, ref: 'user'}]
+        thoughts: [{ type: Schema.Types.ObjectId, ref: 'user' }],
+        friends: [{ type: Schema.Types.ObjectId, ref: 'user' }]
     },
     { toJSON: { virtuals: true } });
 

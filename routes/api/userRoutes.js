@@ -18,7 +18,8 @@ router.route('/').get(async (req, res) => {
     }
 });
 
-router.route('/:userId').get(async (req, res) => { try {
+router.route('/:userId').get(async (req, res) => { 
+    try {
         const user = await User.findOne({ _id: req.params.userId }).select('-__v');
         if (!user) { return res.status(404).json({ message: 'No user with that ID' }); }
         res.json(user);
@@ -63,11 +64,21 @@ router.route('/:userId/friends/:friendId').post(async (req, res) => {
         console.log(err);
         res.status(500).json(err); 
     }
-}).delete(async (req, res) => { try {
-    const friend = await User.findOneAndDelete({ _id: req.params.friendId });
-    if (!friend) { res.status(404).json({ message: 'No friend with that ID' }); }
-    res.json({ message: 'Friend removed.' });
-    } catch (err) { res.status(500).json(err); }
+}).delete(async (req, res) => {
+// Delete a Friend
+    try {
+        const friend = await User.findOneAndUpdate(
+            { _id: req.params.userId },
+            { $pull: { friends: req.params.friendId } },
+            { runVaildators: true, new: true }
+        );
+
+        console.log(friend.friends);
+        res.json({ message: 'Friend removed.' });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json(err);
+    }
 });
 
 module.exports = router;

@@ -3,9 +3,12 @@ const { User, Thought } = require('../../models/index.js');
 
 router.route('/').get(async (req, res) => {
     try {
-        const thoughts = await Thought.find({});
+        const thoughts = await Thought.find();
         res.json(thoughts);
-    } catch (err) { res.status(500).json(err); }
+    } catch (err) { 
+        console.log(err);
+        res.status(500).json(err);
+    }
 }).post(async (req, res) => {
     try {
         const thought = await Thought.create(req.body);
@@ -57,7 +60,7 @@ router.route('/:thoughtId').get(async (req, res) => {
 
 router.route('/:thoughtId/reactions/').post(async (req, res) => {
     try {
-        const reaction = Thought.findOne({ _id: req.params.thoughtId }).select('__v');
+        // const reaction = Thought.findOne({ _id: req.params.thoughtId }).select('__v');
         const thought = await Thought.findOneAndUpdate(
             { _id: req.params.thoughtId },
             { $push: { reactions: req.body } },
@@ -74,29 +77,17 @@ router.route('/:thoughtId/reactions/').post(async (req, res) => {
         console.log(err);
         res.status(500).json(err);
     }
-});
-
-router.route('/:thoughtId/reactions/:reactionId').delete(async (req, res) => {
+}).delete(async (req, res) => {
     try {
-        console.log(req.params.reactionId);
-        const thought = await Thought.findOne({ _id: req.params.thoughtId }).select('-__v');
-        for (let i = 0; i < thought.reactions.length; i++) {
-            console.log(thought.reactions[i]._id);
-            const reaction = await Thought.findOne(
-                { _id: thought.reactions[i]._id },
-                { runValidators: true, new: true }
-                ).select('-__v');
-            console.log(reaction);
-        }
-        // if (!reaction) {
-        //     res.status(404).json({ message: 'No reaction with that ID' }); 
-        //     return;
-        // }
-        console.log('--------------------------');
-        // console.log(thought);
-        
+        const reaction = await Thought.findOneAndUpdate(
+            { _id: req.params.thoughtId },
+            { $pull: { reactions: {reactionId: req.body.reactionId } } },
+            { runVaildators: true, new: true }
+        );
+
+        console.log(reaction.reactions);
         res.json({ message: 'Reaction removed.' });
-    } catch (err) { 
+    } catch (err) {
         console.log(err);
         res.status(500).json(err);
     }
