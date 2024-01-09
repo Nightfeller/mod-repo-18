@@ -16,6 +16,7 @@ const thoughtSchema = new Schema({
         type: String,
         required: true
     }, 
+    // I hate this specifically.
     reactions: [reactionSchema]
 }, 
 { toJSON: { virtuals: true }});

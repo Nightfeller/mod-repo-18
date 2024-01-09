@@ -2,16 +2,18 @@ const router = require('express').Router();
 const { User, Thought } = require('../../models/index.js');
 
 router.route('/').get(async (req, res) => { 
+// Finds all possible users
     try {
         const users = await User.find({});
-        res.json(users);
+        res.json( {userList: users, message: "All users shown."} );
     } catch (err) { 
         console.log(err);
         res.status(500).json(err);
     }
 }).post(async (req, res) => { try {
+// Creates a new user
         const user = await User.create(req.body);
-        res.json(user);
+        res.json( {createdUser: user, message: "User has been created."} );
     } catch (err) {
         console.log(err);
         return res.status(500).json(err);
@@ -19,27 +21,35 @@ router.route('/').get(async (req, res) => {
 });
 
 router.route('/:userId').get(async (req, res) => { 
+// Finds a user by their specific id
     try {
         const user = await User.findOne({ _id: req.params.userId }).select('-__v');
-        if (!user) { return res.status(404).json({ message: 'No user with that ID' }); }
-        res.json(user);
-    } catch (err) { res.status(500).json(err); }
-}).put(async (req, res) => { try {
+        if (!user) { return res.status(404).json({ message: "No user with that ID. Please try another one." }); }
+        res.json( {message: "Found a user.", foundUser: user});
+    } catch (err) { 
+        console.log(err);
+        res.status(500).json(err); 
+    }
+}).put(async (req, res) => { 
+// Updates a specific user
+    try {
         const user = await User.findOneAndUpdate( 
             { _id: req.params.userId }, 
             { $set: req.body }, 
             { runValidators: true, new: true } 
         );
-        if (!user) { res.status(404).json({ message: 'No user with this id!' }); }
-        res.json(user);
+        if (!user) { res.status(404).json({ message: 'No user with this id. Please try another one.' }); }
+        res.json({updatedUser: user, message: "Updated chosen user, altered ObjectId."});
         } catch (err) { 
             console.log(err);
             res.status(500).json(err); 
         }
-}).delete(async (req, res) => { try {
+}).delete(async (req, res) => {
+// Delete a specific user
+    try {
         const user = await User.findOneAndDelete({ _id: req.params.userId });
-        if (!user) { res.status(404).json({ message: 'No user with that ID' }); }
-        res.json({ message: 'User deleted.' });
+        if (!user) { res.status(404).json({ message: 'No user with that ID. Please try another one.' }); }
+        res.json({message: 'Chosen user has been deleted.'});
     } catch (err) { 
         console.log(err);
         res.status(500).json(err);
@@ -47,6 +57,7 @@ router.route('/:userId').get(async (req, res) => {
 });
 
 router.route('/:userId/friends/:friendId').post(async (req, res) => { 
+// Add a new friend
     try {
         const friend = await User.findOne({ _id: req.params.friendId }).select('__v');
         const user = await User.findOneAndUpdate(
@@ -54,18 +65,13 @@ router.route('/:userId/friends/:friendId').post(async (req, res) => {
             { $push: { friends: friend._id } }, 
             { runValidators: true, new: true }
         );
-        console.log(req.params.userId);
-        console.log(user);
-        res.json(user.friends);
+        res.json({friendList: user.friends, message: "Added user's ID to friend list."});
     } catch (err) { 
-        const friend = await User.findOne({ _id: req.params.friendId }).select('__v');
-        // console.log(req.params.userId);
-        console.log("-----------------------------------------------");
         console.log(err);
         res.status(500).json(err); 
     }
 }).delete(async (req, res) => {
-// Delete a Friend
+// Delete a current friend
     try {
         const friend = await User.findOneAndUpdate(
             { _id: req.params.userId },
@@ -74,7 +80,7 @@ router.route('/:userId/friends/:friendId').post(async (req, res) => {
         );
 
         console.log(friend.friends);
-        res.json({ message: 'Friend removed.' });
+        res.json( {friendList: friend, message: "Chosen friend's ID removed."} );
     } catch (err) {
         console.log(err);
         res.status(500).json(err);
