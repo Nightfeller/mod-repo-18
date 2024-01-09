@@ -15,9 +15,9 @@ If you need an alternate MongoDB install for MacOS you can find one [here.](http
 
 ## Usage
 
-First, make sure you have MongoDB Compass and Insomia up and running for the programs to work. Afterwards, type in `npm run seed` or `npm run heroku-seed` to add data into the database. Then, run `npm run start` to start up the API.
+First, make sure you have MongoDB Compass and Insomia up and running for the programs to work. Afterwards, type in `npm run seed` or `npm run heroku-seed` to add data into the database. Then, run `npm run start` or `npm run dev` to start up the API.
 
-The rest of the walkthrough can be found in [this video here.]()
+The rest of the walkthrough can be found in [this video here.](https://drive.google.com/file/d/1nu7k1Cinttk9-7iC3PPGPgdK93tjS8sL/view)
 
 ## Credits
 

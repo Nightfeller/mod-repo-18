@@ -56,6 +56,8 @@ router.route('/:userId').get(async (req, res) => {
     }
 });
 
+// Friends is currently bugged and can add in id values with no connecting user, making it unremovable in the current version.
+
 router.route('/:userId/friends/:friendId').post(async (req, res) => { 
 // Add a new friend
     try {
